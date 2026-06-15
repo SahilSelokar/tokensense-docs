@@ -2,8 +2,8 @@
   "name": "Visual Vortex",
   "theme": "prism",
   "logo": {
-    "dark": "https://visualvortexcreatives.dev/_next/image?url=%2Fvisual-vortex-logo.png&w=96&q=75",
-    "light": "https://visualvortexcreatives.dev/_next/image?url=%2Fvisual-vortex-logo.png&w=96&q=75"
+    "dark": "/logo.png",
+    "light": "/logo.png"
   },
   "colors": {
     "primary": "#EA7252",
@@ -57,7 +57,8 @@
       "group": "Privacy & Security",
       "pages": [
         "privacy/data-policy",
-        "privacy/prompt-logging"
+        "privacy/prompt-logging",
+        "privacy/terms"
       ]
     }
   ],
