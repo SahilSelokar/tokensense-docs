@@ -1,9 +1,9 @@
 {
-  "name": "TokenSense",
+  "name": "Visual Vortex",
   "theme": "prism",
   "logo": {
-    "dark": "/logo/dark.svg",
-    "light": "/logo/light.svg"
+    "dark": "https://visualvortexcreatives.dev/_next/image?url=%2Fvisual-vortex-logo.png&w=96&q=75",
+    "light": "https://visualvortexcreatives.dev/_next/image?url=%2Fvisual-vortex-logo.png&w=96&q=75"
   },
   "colors": {
     "primary": "#EA7252",

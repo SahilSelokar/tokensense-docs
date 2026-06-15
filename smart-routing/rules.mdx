@@ -1,13 +1,13 @@
 ---
-title: "rules"
+title: 'Rules'
+description: 'Documentation for Rules'
 ---
 
 ### Rules
 
 Rules are evaluated in order. The first matching rule that sets a `pin_tier` wins for that action. Deny rules are cumulative — multiple rules can deny multiple tiers.
 
-#### deny\_tiers
-
+#### deny_tiers
 Excludes tiers when the condition is true.
 
 ```python
@@ -18,8 +18,7 @@ Rule(if_context_tokens_gt=4000, deny_tiers=["small"])
 Rule(if_estimated_cost_gt=0.05, deny_tiers=["small", "medium"])
 ```
 
-#### pin\_tier
-
+#### pin_tier
 Forces a specific tier regardless of other rules. First pin wins.
 
 ```python
@@ -28,8 +27,7 @@ Rule(if_task="legal-review", pin_tier="large")
 Rule(if_task="medical-advice", pin_tier="large")
 ```
 
-#### prefer\_tier
-
+#### prefer_tier
 Softly prefers a tier. Overridden by deny rules.
 
 ```python
@@ -38,7 +36,6 @@ Rule(prefer_tier="small", if_estimated_cost_gt=0.001)
 ```
 
 #### escalate on error
-
 Auto-retry on the next tier when a specific error code is received.
 
 ```python
@@ -49,7 +46,7 @@ Rule(if_error_code=529, escalate=True)   # overloaded → try next tier
 #### Rule conditions reference
 
 | Condition | Type | Description |
-| --- | --- | --- |
+|---|---|---|
 | `if_context_tokens_gt` | int | Fires when estimated token count exceeds this |
 | `if_task` | string | Fires when `task_hint` matches exactly |
 | `if_error_code` | int | Fires when previous call returned this HTTP status |
