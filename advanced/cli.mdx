@@ -1,0 +1,28 @@
+---
+title: 'CLI Tools'
+description: 'Manage TokenSense pricing and view reports from the terminal'
+---
+
+### CLI Commands
+
+TokenSense provides built-in CLI tools to manage your local pricing database and view usage reports directly from your terminal.
+
+#### 1. View Usage Report
+
+Use the `report` command to aggregate your local SQLite database and view total token usage and USD spent per model.
+
+```bash
+tokensense report
+```
+
+This will print a summary table of your application's LLM consumption directly in your terminal.
+
+#### 2. Update Pricing
+
+TokenSense calculates costs locally to protect your data privacy. To ensure your cost attribution is perfectly accurate, even for models released today, use the `update-prices` command.
+
+```bash
+tokensense update-prices
+```
+
+This command downloads the latest live pricing database from the open-source LiteLLM project. We recommend running this periodically or as part of your deployment CI/CD pipeline.

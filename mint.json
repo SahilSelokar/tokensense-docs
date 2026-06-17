@@ -50,7 +50,17 @@
       "pages": [
         "providers/openai",
         "providers/anthropic",
-        "providers/groq"
+        "providers/groq",
+        "providers/gemini",
+        "providers/litellm"
+      ]
+    },
+    {
+      "group": "Advanced",
+      "pages": [
+        "advanced/caching",
+        "advanced/cli",
+        "advanced/frameworks"
       ]
     },
     {

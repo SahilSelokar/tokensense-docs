@@ -1,0 +1,30 @@
+---
+title: 'Google Gemini'
+description: 'Documentation for Google Gemini Support'
+---
+
+### Google Gemini Integration
+
+TokenSense supports Google Gemini models via the `google-genai` SDK.
+
+```python
+from tokensense import observe
+from google import genai
+
+client = observe(genai.Client())
+
+response = client.models.generate_content(
+    model='gemini-2.5-flash',
+    contents='Tell me a story in 300 words.',
+)
+
+print(response.text)
+```
+
+### Popular Models
+
+| Model | Input (per 1M) | Output (per 1M) |
+|---|---|---|
+| gemini-2.5-pro | $1.25 | $5.00 |
+| gemini-2.5-flash | $0.15 | $1.25 |
+| gemini-2.5-flash-lite | $0.05 | $0.20 |

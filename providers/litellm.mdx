@@ -1,0 +1,25 @@
+---
+title: 'LiteLLM'
+description: 'Documentation for LiteLLM Integration'
+---
+
+### LiteLLM Integration
+
+TokenSense has native integration with `litellm`. It intercepts the universal `litellm.completion()` method to provide observability across 100+ LLM providers.
+
+```python
+from tokensense import observe
+import litellm
+
+# Wrap litellm directly
+litellm = observe(litellm)
+
+response = litellm.completion(
+    model="gemini/gemini-2.5-flash",
+    messages=[{"role": "user", "content": "Hello!"}]
+)
+
+print(response.choices[0].message.content)
+```
+
+With this integration, you can utilize any provider supported by LiteLLM while maintaining exact cost attribution, token observability, and semantic caching via TokenSense.

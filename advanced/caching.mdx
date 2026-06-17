@@ -1,0 +1,43 @@
+---
+title: 'Semantic Caching'
+description: 'Stop paying for identical prompts using local vector caching'
+---
+
+### Local Semantic Caching
+
+TokenSense includes a local semantic cache powered by `sqlite-vec`. This cache intercepts requests before they hit the LLM provider, saving both cost and latency.
+
+By storing prompt embeddings locally, TokenSense can instantly return identical past responses. This drops your latency to ~1ms and brings your API cost for duplicate questions to $0.00.
+
+### Usage
+
+```python
+from tokensense import observe
+from tokensense.cache import SQLiteVectorCache
+import openai
+
+# Initialize the cache database
+cache = SQLiteVectorCache("./tokensense.db")
+
+# Pass the cache to the observe wrapper
+client = observe(openai.OpenAI(), cache=cache)
+
+# First call: hits OpenAI API and incurs cost & latency
+response1 = client.chat.completions.create(
+    model="gpt-4o", 
+    messages=[{"role": "user", "content": "Explain async/await"}]
+)
+
+# Second call: intercepted instantly, latency ~1ms, cost $0.00
+response2 = client.chat.completions.create(
+    model="gpt-4o", 
+    messages=[{"role": "user", "content": "Explain async/await"}]
+)
+```
+
+### How it works
+
+1. TokenSense intercepts your prompt.
+2. It generates an embedding for the prompt and performs a semantic search in your local SQLite vector database.
+3. If an exact match is found within your defined similarity threshold, the cached response is immediately returned.
+4. If no match is found, the request proceeds to the provider, and the new response is logged in the cache for future use.

@@ -1,0 +1,44 @@
+---
+title: 'Framework Integrations'
+description: 'Using TokenSense with LangChain and LlamaIndex'
+---
+
+### Framework Integrations
+
+TokenSense provides native callback handlers for both **LangChain** and **LlamaIndex**.
+
+Instead of wrapping your LLM client with `observe()`, you simply attach the respective TokenSense callback handler to your LLM configuration. This provides full observability into complex agentic workflows, RAG pipelines, and multi-step reasoning chains.
+
+#### LangChain
+
+Import `TokenSenseCallbackHandler` and pass it into the `callbacks` list when invoking your LangChain models.
+
+```python
+from tokensense import TokenSenseCallbackHandler
+from langchain_groq import ChatGroq
+
+llm = ChatGroq(model="llama-3.1-8b-instant")
+
+# Attach the callback handler to track this invocation
+response = llm.invoke(
+    "Hello!", 
+    config={"callbacks": [TokenSenseCallbackHandler()]}
+)
+```
+
+#### LlamaIndex
+
+Import `TokenSenseLlamaIndexCallback` and add it to your global `CallbackManager` before running your query engines or agents.
+
+```python
+from tokensense import TokenSenseLlamaIndexCallback
+from llama_index.core.callbacks import CallbackManager
+from llama_index.core import Settings
+from llama_index.llms.groq import Groq
+
+# Configure the global callback manager
+Settings.callback_manager = CallbackManager([TokenSenseLlamaIndexCallback()])
+
+llm = Groq(model="llama-3.1-8b-instant")
+response = llm.complete("Hello!")
+```
