@@ -1,0 +1,52 @@
+---
+title: "Streaming Support"
+description: "How TokenSense handles token counting and cost observability for streamed LLM calls."
+---
+
+TokenSense v0.2.3 introduces full, zero-latency support for streaming LLM calls (`stream=True`).
+
+If you're building a chat interface or real-time agent, you need streaming. But historically, streaming makes it very difficult to get exact token counts because the response arrives in chunks rather than a single object.
+
+TokenSense handles this transparently.
+
+## How It Works
+
+When you wrap an LLM call with `observe()` and set `stream=True`:
+
+1. **Exact Usage Extraction**: TokenSense intercepts the generator and scans the chunks as they pass through. For providers that support returning usage in the stream (like Anthropic, or OpenAI/Groq with `stream_options`), TokenSense extracts the **exact** token counts reported by the provider.
+2. **Auto-Injection**: If you forget to pass `stream_options={"include_usage": True}` to an OpenAI or Groq call, TokenSense automatically injects it for you. This doesn't change your billing or behavior, it just ensures the final chunk contains the exact usage data.
+3. **Zero Overhead**: The chunk extraction is completely synchronous and non-blocking. The latency added to your first chunk is typically `<0.5ms`. 
+
+## Graceful Early Termination
+
+What happens if a user closes their browser tab mid-stream? Your application usually breaks out of the `for chunk in response` loop, which triggers a `GeneratorExit` exception in Python.
+
+TokenSense catches this cleanly. If a stream is aborted early:
+- TokenSense marks the resulting event with `partial=True`.
+- It accurately estimates the tokens and cost based on *exactly* what was consumed up to the break point, ensuring your cost tracking remains highly accurate even on interrupted streams.
+
+## Sync and Async
+
+TokenSense natively supports both synchronous generators (`for chunk in response`) and asynchronous generators (`async for chunk in response`). You don't need to change anything about how you call your client; TokenSense automatically wraps the appropriate type.
+
+```python
+import asyncio
+from openai import AsyncOpenAI
+from tokensense import observe
+
+client = observe(AsyncOpenAI())
+
+async def stream_chat():
+    response = await client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": "Write a short poem."}],
+        stream=True
+    )
+    
+    async for chunk in response:
+        print(chunk.choices[0].delta.content or "", end="")
+
+asyncio.run(stream_chat())
+```
+
+In the background, TokenSense will calculate the exact token usage and cost for this stream, completely invisibly.

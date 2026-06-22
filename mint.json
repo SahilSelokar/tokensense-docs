@@ -34,7 +34,8 @@
       "pages": [
         "observability/overview",
         "observability/metadata",
-        "observability/outputs"
+        "observability/outputs",
+        "observability/streaming"
       ]
     },
     {
@@ -58,6 +59,7 @@
     {
       "group": "Advanced",
       "pages": [
+        "advanced/shadowtest",
         "advanced/caching",
         "advanced/cli",
         "advanced/frameworks"

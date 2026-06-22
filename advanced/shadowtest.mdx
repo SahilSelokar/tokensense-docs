@@ -1,0 +1,86 @@
+---
+title: "ShadowTest (A/B Testing)"
+description: "Evaluate cheaper models against your production models using real-world prompts."
+---
+
+When deciding if a cheaper or faster model (like `gpt-4o-mini` or `claude-3-haiku`) is "good enough" for a specific task, vibes aren't enough. You need hard data.
+
+**ShadowTest** allows you to define multiple models (tiers), run prompts against them in parallel, and score the candidate outputs against your current production output.
+
+## Quick Start
+
+```python
+from tokensense.harness import ShadowTest
+import openai
+import anthropic
+
+# 1. Define the models you want to test
+clients = {
+    "current": openai.OpenAI(), # e.g. gpt-4o
+    "candidate": anthropic.Anthropic() # e.g. claude-3-haiku
+}
+
+# 2. Define the prompts
+prompts = [
+    {
+        "model_current": "gpt-4o",
+        "model_candidate": "claude-3-haiku-20240307",
+        "messages": [{"role": "user", "content": "Return the JSON for a user profile."}],
+        "expected_format": "json"
+    }
+]
+
+# 3. Run the test
+test = ShadowTest(clients, prompts, scoring="format-check")
+report = test.run()
+
+print(report.summary())
+```
+
+## Scoring Strategies
+
+ShadowTest supports four built-in scoring strategies to evaluate candidate outputs:
+
+### 1. `exact-match`
+Strict string comparison against an expected output. Best for highly deterministic tasks like classification or rigid data extraction.
+```python
+ShadowTest(..., scoring="exact-match")
+# Requires "expected_output" in your prompt dicts
+```
+
+### 2. `format-check`
+Validates that the output adheres to a specific format (currently supports `json`).
+```python
+ShadowTest(..., scoring="format-check")
+# Requires "expected_format": "json" in your prompt dicts
+```
+
+### 3. `similarity`
+Uses vector embeddings to ensure candidate answers remain semantically close to the reference answer. Ideal for summarization or open-ended generation where exact wording doesn't matter.
+```python
+def my_embed_fn(text: str) -> list[float]:
+    # call your embedding model here
+    pass
+
+ShadowTest(..., scoring="similarity", embedding_fn=my_embed_fn, similarity_threshold=0.85)
+```
+
+### 4. `llm-judge`
+Uses an LLM to evaluate the candidate output against a custom rubric, using the production output as a reference.
+```python
+ShadowTest(
+    ..., 
+    scoring="llm-judge", 
+    judge=openai.OpenAI(), 
+    judge_rubric="The answer must be polite and cover all the same facts as the reference."
+)
+```
+
+## Reading the Report
+
+The `ShadowTestReport` gives you objective metrics to make a routing decision:
+- **Pass Rate**: What percentage of candidate responses passed the scoring strategy?
+- **Avg Cost**: The average cost per call for each tier.
+- **Avg Latency**: The average latency per call for each tier.
+
+Use `report.to_json()` or `report.to_markdown()` to save the results for your CI/CD pipelines or pull request comments.
