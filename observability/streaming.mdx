@@ -25,6 +25,33 @@ TokenSense catches this cleanly. If a stream is aborted early:
 - TokenSense marks the resulting event with `partial=True`.
 - It accurately estimates the tokens and cost based on *exactly* what was consumed up to the break point, ensuring your cost tracking remains highly accurate even on interrupted streams.
 
+The same behavior applies to async streams running inside an ASGI framework like FastAPI or Starlette. When a client disconnects mid-stream, the framework cancels the in-flight task by raising `asyncio.CancelledError` inside your `async for chunk in response` loop. TokenSense catches this exactly like `GeneratorExit`: the event is marked `partial=True`, the accumulated tokens and cost are still emitted, and the `CancelledError` is re-raised so FastAPI/Starlette can finish unwinding the request normally.
+
+```python
+from fastapi import FastAPI
+from fastapi.responses import StreamingResponse
+from openai import AsyncOpenAI
+from tokensense import observe
+
+app = FastAPI()
+client = observe(AsyncOpenAI())
+
+@app.get("/chat")
+async def chat():
+    async def token_stream():
+        response = await client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": "Write a short poem."}],
+            stream=True,
+        )
+        async for chunk in response:
+            yield chunk.choices[0].delta.content or ""
+
+    # If the client disconnects mid-stream, TokenSense still emits a
+    # partial=True event with the tokens and cost consumed so far.
+    return StreamingResponse(token_stream(), media_type="text/plain")
+```
+
 ## Sync and Async
 
 TokenSense natively supports both synchronous generators (`for chunk in response`) and asynchronous generators (`async for chunk in response`). You don't need to change anything about how you call your client; TokenSense automatically wraps the appropriate type.
