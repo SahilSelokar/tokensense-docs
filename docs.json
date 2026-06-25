@@ -1,0 +1,89 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Visual Vortex",
+  "colors": {
+    "primary": "#EA7252",
+    "light": "#EA7252",
+    "dark": "#EA7252"
+  },
+  "favicon": "/favicon.png",
+  "navigation": {
+    "groups": [
+      {
+        "group": "Get Started",
+        "pages": [
+          "introduction",
+          "quickstart",
+          "installation"
+        ]
+      },
+      {
+        "group": "Observability",
+        "pages": [
+          "observability/overview",
+          "observability/metadata",
+          "observability/outputs",
+          "observability/streaming"
+        ]
+      },
+      {
+        "group": "Smart Routing",
+        "pages": [
+          "smart-routing/overview",
+          "smart-routing/rules",
+          "smart-routing/decisions"
+        ]
+      },
+      {
+        "group": "Providers",
+        "pages": [
+          "providers/openai",
+          "providers/anthropic",
+          "providers/groq",
+          "providers/gemini",
+          "providers/litellm"
+        ]
+      },
+      {
+        "group": "Advanced",
+        "pages": [
+          "advanced/shadowtest",
+          "advanced/caching",
+          "advanced/cli",
+          "advanced/frameworks"
+        ]
+      },
+      {
+        "group": "Privacy & Security",
+        "pages": [
+          "privacy/data-policy",
+          "privacy/prompt-logging",
+          "privacy/terms"
+        ]
+      }
+    ]
+  },
+  "logo": {
+    "light": "/logo.png",
+    "dark": "/logo.png"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "GitHub",
+        "href": "https://github.com/SahilSelokar/tokensense"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Get Started",
+      "href": "http://visualvortexcreatives.dev/"
+    }
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/SahilSelokar/tokensense"
+    }
+  }
+}
